@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:youtube/pages/admin/product_from_page.dart';
 
-import 'auth_page.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({super.key});
@@ -19,20 +18,18 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
   Future<void> _signOut() async {
     try {
+      // Tetap coba untuk logout dari server Supabase
       await Supabase.instance.client.auth.signOut();
-
-      // JIKA LOGOUT BERHASIL
-      if (mounted) {
-        // Navigasi ke halaman login dan hapus semua rute sebelumnya
-        Navigator.pushAndRemoveUntil(context, '/' as Route<Object?>, (route) => false);
-      }
     } catch (e) {
-      // Handle error jika perlu
+      // Jika terjadi error (misal: tidak ada internet), kita bisa mencatatnya
+      // di console untuk debugging, tapi kita tidak menampilkan pesan error
+      // yang mengganggu ke pengguna.
+      debugPrint("Error during sign out: $e");
+    } finally {
+      // BLOK INI AKAN SELALU DIJALANKAN, BAIK LOGOUT BERHASIL MAUPUN GAGAL.
+      // Ini memastikan pengguna selalu keluar dari halaman admin.
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Gagal logout, coba lagi.'),
-          backgroundColor: Colors.red,
-        ));
+        Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
       }
     }
   }

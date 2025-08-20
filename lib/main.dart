@@ -1,4 +1,3 @@
-// main.dart
 
 import 'package:flutter/material.dart';
 import 'package:youtube/pages/admin/admin_dashboard_page.dart';
@@ -8,11 +7,7 @@ import 'package:youtube/screens/about_screen.dart';
 import 'package:youtube/screens/home_screen.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:youtube/widgets/dekstop/order_dekstop.dart';
-import 'package:youtube/widgets/mobile/order_mobile.dart';
-
-import 'constants/size.dart';
-// +++ Impor halaman baru yang sudah dibuat +++
+import 'package:youtube/screens/order_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,21 +38,7 @@ class MyApp extends StatelessWidget {
         '/about': (context) => const HomePage(child: AboutScreen()),
 
         // --- INI ADALAH LOGIKA BARU YANG LEBIH AMAN UNTUK HALAMAN PESAN ---
-        '/order': (context) {
-          return LayoutBuilder(
-            builder: (context, constraints) {
-              if (constraints.maxWidth >= kMinDesktopWidth) {
-                // Untuk desktop, bungkus OrderDekstop dengan kerangka HomePage
-                // karena OrderDekstop tidak punya Scaffold sendiri.
-                return const HomePage(child: OrderDekstop());
-              } else {
-                // Untuk mobile, tampilkan OrderMobile secara langsung
-                // karena OrderMobile sudah punya Scaffold sendiri.
-                return const OrderMobile();
-              }
-            },
-          );
-        },
+        '/order': (context) => const HomePage(child: OrderScreen()),
         // ----------------------------------------------------------------
 
         // Rute untuk admin

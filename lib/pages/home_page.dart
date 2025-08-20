@@ -1,15 +1,18 @@
-// home_page.dart
+// lib/pages/home_page.dart
 
 import 'package:flutter/material.dart';
 import 'package:youtube/constants/colors.dart';
 import 'package:youtube/constants/size.dart';
+import 'package:youtube/pages/user/cart_page.dart';
+import 'package:youtube/services/cart_service.dart';
 import 'package:youtube/widgets/mobile/drawer_mobile.dart';
+import 'package:youtube/widgets/mobile/header_mobile.dart';
+
 import '../widgets/dekstop/header_dekstop.dart';
-import '../widgets/mobile/header_mobile.dart';
 
 class HomePage extends StatefulWidget {
-  final Widget child; // +++ Tambahkan parameter child
-  const HomePage({super.key, required this.child}); // +++ Tambahkan parameter child
+  final Widget child;
+  const HomePage({super.key, required this.child});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -17,9 +20,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  final CartService _cartService = CartService(); // Tambahkan CartService
 
   @override
   Widget build(BuildContext context) {
+    // Cek nama rute saat ini
+    final currentRoute = ModalRoute.of(context)?.settings.name;
+
     return LayoutBuilder(builder: (context, constraints) {
       return Scaffold(
         key: scaffoldKey,
@@ -27,38 +34,65 @@ class _HomePageState extends State<HomePage> {
         endDrawer: constraints.maxWidth >= kMinDesktopWidth
             ? null
             : const DrawerMobile(),
-        // --- Ganti body dari ListView menjadi SingleChildScrollView yang berisi header dan child ---
-        body: SingleChildScrollView( // Memastikan halaman bisa di-scroll jika kontennya panjang
-          scrollDirection: Axis.vertical,
-          child: Column(
-            children: [
-              // HEADER
-              if (constraints.maxWidth >= kMinDesktopWidth)
-                const HeaderDekstop()
-              else
-                HeaderMobile(
-                  onLogoTap: () {
-                    // Navigasi ke home
-                    if (ModalRoute.of(context)?.settings.name != '/') {
-                      Navigator.pushNamed(context, '/');
-                    }
+        // --- PERUBAHAN 1: TAMBAHKAN FLOATING ACTION BUTTON ---
+        floatingActionButton: (currentRoute == '/order' &&
+            constraints.maxWidth < kMinDesktopWidth)
+            ? ValueListenableBuilder<int>(
+          valueListenable: _cartService.totalItemsNotifier,
+          builder: (context, totalItems, child) {
+            return Stack(
+              clipBehavior: Clip.none,
+              children: [
+                FloatingActionButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => const CartPage(),
+                    ));
                   },
-                  onMenuTap: () {
-                    scaffoldKey.currentState?.openEndDrawer();
-                  },
+                  child: const Icon(Icons.shopping_cart),
                 ),
-
-              // KONTEN HALAMAN UTAMA (CHILD)
-              widget.child, // +++ Tampilkan widget child di sini
-
-              // FOOTER (jika ada dan bersifat global)
-              Container(
-                height: 500,
-                width: double.maxFinite,
-                // Anda bisa meletakkan footer di sini jika ingin tampil di setiap halaman
+                if (totalItems > 0)
+                  Positioned(
+                    right: -4,
+                    top: -4,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        '$totalItems',
+                        style: const TextStyle(
+                            color: Colors.white, fontSize: 12),
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
+        )
+            : null, // Jika bukan halaman order atau di desktop, jangan tampilkan FAB
+        // --------------------------------------------------------
+        body: Column(
+          children: [
+            if (constraints.maxWidth >= kMinDesktopWidth)
+              const HeaderDekstop()
+            else
+              HeaderMobile(
+                onLogoTap: () {
+                  if (ModalRoute.of(context)?.settings.name != '/') {
+                    Navigator.pushNamed(context, '/');
+                  }
+                },
+                onMenuTap: () {
+                  scaffoldKey.currentState?.openEndDrawer();
+                },
               ),
-            ],
-          ),
+            Expanded(
+              child: widget.child,
+            ),
+          ],
         ),
       );
     });

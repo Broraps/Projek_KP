@@ -1,5 +1,3 @@
-// lib/widgets/desktop/order_dekstop.dart
-
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -14,11 +12,17 @@ class OrderDekstop extends StatefulWidget {
 }
 
 class _OrderDekstopState extends State<OrderDekstop> {
-  final _productsFuture = Supabase.instance.client
-      .from('products')
-      .select()
-      .order('created_at', ascending: false);
+  late final Future<List<Map<String, dynamic>>> _productsFuture;
   final CartService _cartService = CartService();
+
+  @override
+  void initState() {
+    super.initState();
+    _productsFuture = Supabase.instance.client
+        .from('products')
+        .select()
+        .order('created_at', ascending: false);
+  }
 
   Future<void> _checkoutToWhatsApp() async {
     const String phoneNumber = '6289664348703'; // Ganti nomormu
@@ -61,10 +65,11 @@ class _OrderDekstopState extends State<OrderDekstop> {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  return Center(
+                      child: Text('Terjadi Error: ${snapshot.error}'));
                 }
-                final products = snapshot.data!;
-                if (products.isEmpty) {
+                final products = snapshot.data;
+                if (products == null || products.isEmpty) {
                   return const Center(child: Text('Belum ada produk.'));
                 }
 
@@ -136,6 +141,7 @@ class _OrderDekstopState extends State<OrderDekstop> {
             child: ValueListenableBuilder<List<CartItem>>(
               valueListenable: _cartService.items,
               builder: (context, cartItems, child) {
+                // ... (Sisa kode keranjang tidak perlu diubah, sudah benar)
                 return Card(
                   elevation: 6,
                   child: Padding(
@@ -143,19 +149,10 @@ class _OrderDekstopState extends State<OrderDekstop> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const Text(
-                          'Keranjang Belanja',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
-                        ),
+                        const Text('Keranjang Belanja', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
                         const Divider(height: 24),
                         if (cartItems.isEmpty)
-                          const Expanded(
-                            child: Center(
-                              child: Text('Keranjang masih kosong.'),
-                            ),
-                          )
+                          const Expanded(child: Center(child: Text('Keranjang masih kosong.')))
                         else
                           Expanded(
                             child: ListView.builder(
@@ -163,32 +160,16 @@ class _OrderDekstopState extends State<OrderDekstop> {
                               itemBuilder: (context, index) {
                                 final item = cartItems[index];
                                 return ListTile(
-                                  leading: Image.network(item.imageUrl,
-                                      width: 40, fit: BoxFit.cover),
+                                  leading: Image.network(item.imageUrl, width: 40, fit: BoxFit.cover),
                                   title: Text(item.title),
                                   subtitle: Row(
                                     children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.remove_circle,
-                                            size: 20),
-                                        onPressed: () => _cartService
-                                            .decrementQuantity(item.id),
-                                      ),
+                                      IconButton(icon: const Icon(Icons.remove_circle, size: 20), onPressed: () => _cartService.decrementQuantity(item.id)),
                                       Text('${item.quantity}'),
-                                      IconButton(
-                                        icon: const Icon(Icons.add_circle,
-                                            size: 20),
-                                        onPressed: () => _cartService
-                                            .incrementQuantity(item.id),
-                                      ),
+                                      IconButton(icon: const Icon(Icons.add_circle, size: 20), onPressed: () => _cartService.incrementQuantity(item.id)),
                                     ],
                                   ),
-                                  trailing: IconButton(
-                                    icon: const Icon(Icons.close,
-                                        color: Colors.red, size: 20),
-                                    onPressed: () =>
-                                        _cartService.removeFromCart(item.id),
-                                  ),
+                                  trailing: IconButton(icon: const Icon(Icons.close, color: Colors.red, size: 20), onPressed: () => _cartService.removeFromCart(item.id)),
                                 );
                               },
                             ),
@@ -197,15 +178,8 @@ class _OrderDekstopState extends State<OrderDekstop> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text('Total:',
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold)),
-                            Text(
-                                'Rp ${_cartService.totalPrice.toStringAsFixed(0)}',
-                                style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold)),
+                            const Text('Total:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            Text('Rp ${_cartService.totalPrice.toStringAsFixed(0)}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                           ],
                         ),
                         const SizedBox(height: 16),

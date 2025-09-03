@@ -1,13 +1,11 @@
-// lib/pages/admin/product_form_page.dart
-
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb, Uint8List; // 1. Import kIsWeb & Uint8List
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProductFormPage extends StatefulWidget {
-  final Map<String, dynamic>? product; // Produk yang akan diedit (opsional)
-
+  final Map<String, dynamic>? product;
   const ProductFormPage({super.key, this.product});
 
   @override
@@ -20,7 +18,9 @@ class _ProductFormPageState extends State<ProductFormPage> {
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
 
-  File? _selectedImage;
+  // 2. Siapkan variabel untuk file (Mobile/Desktop) dan bytes (Web)
+  File? _selectedImageFile;
+  Uint8List? _selectedImageBytes;
   String? _networkImageUrl;
   bool _isLoading = false;
   bool get _isEditMode => widget.product != null;
@@ -29,7 +29,6 @@ class _ProductFormPageState extends State<ProductFormPage> {
   void initState() {
     super.initState();
     if (_isEditMode) {
-      // Jika mode edit, isi form dengan data produk
       _titleController.text = widget.product!['title'];
       _descriptionController.text = widget.product!['description'];
       _priceController.text = widget.product!['price'].toString();
@@ -49,37 +48,43 @@ class _ProductFormPageState extends State<ProductFormPage> {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      setState(() {
-        _selectedImage = File(pickedFile.path);
-      });
+      // 3. Cek platform, lalu simpan data gambar sesuai formatnya
+      if (kIsWeb) {
+        _selectedImageBytes = await pickedFile.readAsBytes();
+      } else {
+        _selectedImageFile = File(pickedFile.path);
+      }
+      setState(() {}); // Update UI untuk menampilkan preview
     }
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-    if (_selectedImage == null && !_isEditMode) {
+    if (!_formKey.currentState!.validate()) return;
+    if (_selectedImageFile == null && _selectedImageBytes == null && !_isEditMode) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Silakan pilih gambar terlebih dahulu.'),
-        backgroundColor: Colors.red,
-      ));
+          content: Text('Silakan pilih gambar terlebih dahulu.'),
+          backgroundColor: Colors.red));
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() { _isLoading = true; });
 
     try {
       String? imageUrl;
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
 
-      // 1. Upload gambar jika ada gambar baru yang dipilih
-      if (_selectedImage != null) {
-        final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+      // 4. Cek platform saat upload ke Supabase Storage
+      if (_selectedImageBytes != null) { // Upload untuk Web
         await Supabase.instance.client.storage
             .from('food')
-            .upload('uploads/$fileName', _selectedImage!);
+            .uploadBinary('uploads/$fileName', _selectedImageBytes!);
+      } else if (_selectedImageFile != null) { // Upload untuk Mobile/Desktop
+        await Supabase.instance.client.storage
+            .from('food')
+            .upload('uploads/$fileName', _selectedImageFile!);
+      }
+
+      if(_selectedImageBytes != null || _selectedImageFile != null) {
         imageUrl = Supabase.instance.client.storage
             .from('food')
             .getPublicUrl('uploads/$fileName');
@@ -95,35 +100,29 @@ class _ProductFormPageState extends State<ProductFormPage> {
       };
 
       if (_isEditMode) {
-        // 2a. Update data di database
         await Supabase.instance.client
             .from('products')
             .update(data)
             .match({'id': widget.product!['id']});
       } else {
-        // 2b. Insert data baru ke database
         await Supabase.instance.client.from('products').insert(data);
       }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Produk berhasil ${_isEditMode ? 'diperbarui' : 'disimpan'}'),
-          backgroundColor: Colors.green,
-        ));
+            content: Text('Produk berhasil ${_isEditMode ? 'diperbarui' : 'disimpan'}'),
+            backgroundColor: Colors.green));
         Navigator.of(context).pop();
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Gagal menyimpan produk: $e'),
-          backgroundColor: Colors.red,
-        ));
+            content: Text('Gagal menyimpan produk: $e'),
+            backgroundColor: Colors.red));
       }
     }
 
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() { _isLoading = false; });
   }
 
   @override
@@ -139,62 +138,63 @@ class _ProductFormPageState extends State<ProductFormPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Preview Gambar
+              // 5. Widget preview gambar yang cerdas
               InkWell(
                 onTap: _pickImage,
                 child: Container(
                   height: 200,
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: _selectedImage != null
-                      ? Image.file(_selectedImage!, fit: BoxFit.cover)
-                      : (_networkImageUrl != null
-                      ? Image.network(_networkImageUrl!, fit: BoxFit.cover)
-                      : const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.image, size: 40),
-                        Text('Ketuk untuk pilih gambar')
-                      ],
-                    ),
-                  )),
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8)),
+                  child: _buildImagePreview(), // Panggil fungsi preview
                 ),
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _titleController,
                 decoration: const InputDecoration(labelText: 'Nama Produk'),
-                validator: (value) =>
-                value!.isEmpty ? 'Nama tidak boleh kosong' : null,
+                validator: (value) => value!.isEmpty? 'Nama produk tidak boleh kosong' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(labelText: 'Deskripsi'),
-                maxLines: 3,
-                validator: (value) =>
-                value!.isEmpty ? 'Deskripsi tidak boleh kosong' : null,
+                validator: (value) => value!.isEmpty? 'Deskripsi tidak boleh kosong' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _priceController,
                 decoration: const InputDecoration(labelText: 'Harga'),
-                keyboardType: TextInputType.number,
-                validator: (value) =>
-                value!.isEmpty ? 'Harga tidak boleh kosong' : null,
+                validator: (value) => value!.isEmpty? 'Harga tidak boleh kosong' : null,
               ),
               const SizedBox(height: 24),
               ElevatedButton(
-                onPressed: _isLoading ? null : _submit,
-                child: Text(_isLoading ? 'Menyimpan...' : 'Simpan Produk'),
-              ),
+                  onPressed: _isLoading ? null : _submit,
+                  child: Text(_isLoading ? 'Menyimpan...' : 'Simpan Produk')),
             ],
           ),
         ),
       ),
     );
+  }
+
+  // 6. Buat fungsi helper untuk memilih widget gambar yang tepat
+  Widget _buildImagePreview() {
+    if (_selectedImageBytes != null) {
+      // Jika di web, gunakan Image.memory
+      return Image.memory(_selectedImageBytes!, fit: BoxFit.cover);
+    } else if (_selectedImageFile != null) {
+      // Jika di mobile/desktop, gunakan Image.file
+      return Image.file(_selectedImageFile!, fit: BoxFit.cover);
+    } else if (_networkImageUrl != null) {
+      // Jika mode edit dan belum ada gambar baru, tampilkan gambar lama
+      return Image.network(_networkImageUrl!, fit: BoxFit.cover);
+    } else {
+      // Tampilan default
+      return const Center(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [Icon(Icons.image, size: 40), Text('Ketuk untuk pilih gambar')]));
+    }
   }
 }

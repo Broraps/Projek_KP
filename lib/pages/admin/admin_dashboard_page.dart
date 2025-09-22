@@ -1,5 +1,3 @@
-// lib/pages/admin/admin_dashboard_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:youtube/pages/admin/product_from_page.dart';

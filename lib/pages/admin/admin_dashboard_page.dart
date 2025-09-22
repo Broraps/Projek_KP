@@ -1,3 +1,5 @@
+// lib/pages/admin/admin_dashboard_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:youtube/pages/admin/product_from_page.dart';
@@ -11,42 +13,38 @@ class AdminDashboardPage extends StatefulWidget {
 }
 
 class _AdminDashboardPageState extends State<AdminDashboardPage> {
-  // Gunakan Stream untuk mendapatkan data produk secara real-time
   final _productsStream = Supabase.instance.client
       .from('products')
       .stream(primaryKey: ['id']).order('created_at', ascending: false);
 
   Future<void> _signOut() async {
     try {
-      // Tetap coba untuk logout dari server Supabase
       await Supabase.instance.client.auth.signOut();
-    } catch (e) {
-      // Jika terjadi error (misal: tidak ada internet), kita bisa mencatatnya
-      // di console untuk debugging, tapi kita tidak menampilkan pesan error
-      // yang mengganggu ke pengguna.
-      debugPrint("Error during sign out: $e");
-    } finally {
-      // BLOK INI AKAN SELALU DIJALANKAN, BAIK LOGOUT BERHASIL MAUPUN GAGAL.
-      // Ini memastikan pengguna selalu keluar dari halaman admin.
       if (mounted) {
         Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Gagal logout, coba lagi.'),
+          backgroundColor: Colors.red,
+        ));
       }
     }
   }
 
-  Future<void> _deleteProduct(String productId, String imageUrl) async {
+  // --- PERUBAHAN UTAMA DI SINI ---
+  Future<void> _deleteProduct(int productId, String imageUrl) async {
     try {
-      // 1. Hapus gambar dari Storage
       final imageName = imageUrl.split('/').last;
       await Supabase.instance.client.storage
           .from('food')
           .remove(['uploads/$imageName']);
 
-      // 2. Hapus data dari tabel database
       await Supabase.instance.client
           .from('products')
           .delete()
-          .match({'id': productId});
+          .match({'id': productId}); // Sekarang productId adalah int
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -55,10 +53,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         ));
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Gagal menghapus produk: $e'),
-        backgroundColor: Colors.red,
-      ));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Gagal menghapus produk: $e'),
+          backgroundColor: Colors.red,
+        ));
+      }
     }
   }
 
@@ -75,12 +75,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           ),
         ],
       ),
-      // Tombol plus untuk menambah produk baru
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
+        onPressed: () async {
+          // Pola ini juga bagus untuk me-refresh data jika diperlukan
+          await Navigator.of(context).push(MaterialPageRoute(
             builder: (_) => const ProductFormPage(),
           ));
+          setState(() {}); // Panggil setState untuk refresh setelah menambah
         },
         child: const Icon(Icons.add),
       ),
@@ -105,7 +106,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             itemBuilder: (context, index) {
               final product = products[index];
               return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                margin:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: ListTile(
                   leading: Image.network(
                     product['image_url'],
@@ -120,20 +122,22 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Tombol Update
                       IconButton(
                         icon: const Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
+                        onPressed: () async {
+                          // Pola ini juga bagus untuk me-refresh data jika diperlukan
+                          await Navigator.of(context).push(MaterialPageRoute(
                             builder: (_) => ProductFormPage(product: product),
                           ));
+                          setState(() {}); // Panggil setState untuk refresh setelah edit
                         },
                       ),
-                      // Tombol Delete
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () =>
-                            _deleteProduct(product['id'], product['image_url']),
+                        // Panggilan di sini tidak perlu diubah karena product['id']
+                        // sudah dalam format angka (integer)
+                        onPressed: () => _deleteProduct(
+                            product['id'], product['image_url']),
                       ),
                     ],
                   ),

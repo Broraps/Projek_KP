@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:youtube/pages/admin/admin_dashboard_page.dart';
 import 'package:youtube/pages/admin/auth_page.dart';
 import 'package:youtube/pages/home_page.dart';
@@ -12,9 +13,11 @@ import 'package:youtube/screens/order_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await dotenv.load(fileName: ".env");
+
   await Supabase.initialize(
-    url: "https://klpvwvmjdyyxyqtlfchz.supabase.co",
-    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtscHZ3dm1qZHl5eHlxdGxmY2h6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzOTg4NzgsImV4cCI6MjA2OTk3NDg3OH0.ATvqx7kQqqJTvGK90TEjRPdaAL2TcIq6J88vR9E4VJU",
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
 
   runApp(const MyApp());

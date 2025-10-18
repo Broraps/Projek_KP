@@ -14,7 +14,7 @@ class OrderScreen extends StatelessWidget { // Pastikan nama kelasnya OrderScree
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxWidth >= kMinDesktopWidth) {
-          return const OrderDekstop();
+          return const OrderDesktop();
         } else {
           return const OrderMobile();
         }

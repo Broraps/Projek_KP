@@ -17,25 +17,6 @@ const List<Map> foodItems = [
   },
 ];
 
-const List<Map> skillItems = [
-  {
-    "img": "assets/1.JPG",
-    "title": "Makanan 1"
-  },
-  {
-    "img": "assets/2.JPG",
-    "title": "Makanan 2"
-  },
-  {
-    "img": "assets/3.JPG",
-    "title": "Makanan 3"
-  },
-  {
-    "img": "assets/4.JPG",
-    "title": "Makanan 4"
-  },
-];
-
 const List<Map<String, String>> testiPhotos = [
   {
     "img": "assets/testimoni/testi_1.jpg",

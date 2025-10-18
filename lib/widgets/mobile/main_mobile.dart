@@ -1,5 +1,3 @@
-// lib/widgets/mobile/main_mobile.dart
-
 import 'dart:async';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';

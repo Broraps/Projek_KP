@@ -1,5 +1,3 @@
-// lib/widgets/dekstop/main_dekstop.dart
-
 import 'dart:async';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +10,7 @@ class MainDekstop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final screenWidth = screenSize.width;
+    // final screenWidth = screenSize.width;
 
     void _launchURL(String url) async {
       final Uri uri = Uri.parse(url);
@@ -148,8 +146,7 @@ class MainDekstop extends StatelessWidget {
                     autoPlayInterval: const Duration(seconds: 4),
                     enlargeCenterPage: true,
                     viewportFraction: 0.8,
-                  )
-              ),
+                  )),
             ),
           ),
         ],

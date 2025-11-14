@@ -2,9 +2,22 @@
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:youtube/widgets/social_media_icon.dart';
 
 import '../../constants/colors.dart';
 import '../../constants/skill_items.dart';
+
+void _launchMaps() async {
+  const String query = "Jl. Veteran No.66, Nagri Kaler, Kec. Purwakarta, Kab. Purwakarta, Jawa Barat 41115";
+  final Uri uri = Uri(scheme: 'https', host: 'www.google.com', path: '/maps/search/', queryParameters: {'api': '1', 'query': query});
+  if (await canLaunchUrl(uri)) {
+    await launchUrl(uri);
+  } else {
+    throw 'Could not launch $uri';
+  }
+}
 
 class AboutDekstop extends StatelessWidget {
   const AboutDekstop({super.key});
@@ -39,8 +52,8 @@ class AboutDekstop extends StatelessWidget {
                 const SizedBox(height: 50),
                 Text(
                   'Pangsit Jontor Wadidaw hadir dari dapur rumahan dengan semangat UMKM yang mengutamakan rasa, kualitas, dan kepuasan pelanggan. '
-                      'Kami percaya bahwa makanan enak tidak harus mahal. Dengan bahan pilihan yang segar, bumbu khas yang menggoda, dan proses pembuatan yang higienis, '
-                      'kami menyajikan pangsit pedas dengan cita rasa wadidaw yang bikin nagih!',
+                  'Kami percaya bahwa makanan enak tidak harus mahal. Dengan bahan pilihan yang segar, bumbu khas yang menggoda, dan proses pembuatan yang higienis, '
+                  'kami menyajikan pangsit pedas dengan cita rasa wadidaw yang bikin nagih!',
                   style: TextStyle(
                     color: Colors.red[900],
                     fontStyle: FontStyle.italic,
@@ -69,17 +82,40 @@ class AboutDekstop extends StatelessWidget {
                       const Icon(Icons.map_sharp,
                           color: CustomColor.iconHeader, size: 100),
                       const SizedBox(height: 20),
-                      Text(
-                        "Jl. Veteran No.66, Nagri Kaler\n"
-                            "Kec. Purwakarta, Kab. Purwakarta\n"
-                            "Jawa Barat 41115",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 35,
-                          height: 1.5,
-                          fontWeight: FontWeight.bold,
-                          color: CustomColor.backgroundPrimary,
-                          fontStyle: FontStyle.italic,
+                      InkWell(
+                        onTap: _launchMaps,
+                        borderRadius: BorderRadius.circular(12),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: Column(
+                              children: [
+                                Text(
+                                  "Jl. Veteran No.66, Nagri Kaler\n"
+                                  "Kec. Purwakarta, Kab. Purwakarta\n"
+                                  "Jawa Barat 41115",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 35,
+                                    height: 1.5,
+                                    fontWeight: FontWeight.bold,
+                                    color: CustomColor.backgroundPrimary,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                                const SizedBox(height: 15),
+                                const Text(
+                                  "(Klik untuk membuka di Google Maps)",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black54,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -119,7 +155,7 @@ class AboutDekstop extends StatelessWidget {
                           Expanded(
                               flex: 30,
                               child:
-                              Container(color: CustomColor.backgroundLogo)),
+                                  Container(color: CustomColor.backgroundLogo)),
                           Expanded(
                               flex: 70,
                               child: Container(
@@ -155,7 +191,8 @@ class AboutDekstop extends StatelessWidget {
                                       fontWeight: FontWeight.bold,
                                       color: CustomColor.backgroundLogo,
                                       shadows: [
-                                        Shadow(blurRadius: 2, color: Colors.black)
+                                        Shadow(
+                                            blurRadius: 2, color: Colors.black)
                                       ]),
                                 ),
                                 Text(
@@ -165,7 +202,8 @@ class AboutDekstop extends StatelessWidget {
                                       fontWeight: FontWeight.bold,
                                       color: CustomColor.backgroundLogo,
                                       shadows: [
-                                        Shadow(blurRadius: 2, color: Colors.black)
+                                        Shadow(
+                                            blurRadius: 2, color: Colors.black)
                                       ]),
                                 ),
                               ],
@@ -245,6 +283,63 @@ class AboutDekstop extends StatelessWidget {
               ],
             ),
           ),
+          // Footer Section
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 40),
+            color: const Color.fromARGB(255, 31, 31, 31), // Warna gelap untuk kontras
+            child: Column(
+              children: [
+                const Text(
+                  "Hubungi Kami",
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  "Punya pertanyaan atau mau order? Jangan ragu hubungi kami!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white70,
+                  ),
+                ),
+                const SizedBox(height: 40),
+                Row( // Wrapper untuk ikon sosial media agar berada di tengah
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SocialMediaIcon(
+                      icon: FontAwesomeIcons.instagram,
+                      url: 'https://www.instagram.com/pangsitjontor.wadidaw/',
+                    ),
+                    const SizedBox(width: 30),
+                    SocialMediaIcon(
+                      icon: FontAwesomeIcons.tiktok,
+                      url: 'https://www.tiktok.com/@pangsitjontor.wadidaw',
+                    ),
+                    const SizedBox(width: 30),
+                    SocialMediaIcon(
+                      icon: FontAwesomeIcons.whatsapp,
+                      // Ganti dengan nomor WhatsApp yang benar diawali dengan 62
+                      url: 'https://wa.me/6281829414',
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 50),
+                const Divider(color: Colors.white24, indent: 100, endIndent: 100),
+                const SizedBox(height: 20),
+                const Text(
+                  "© 2024 Pangsit Jontor Wadidaw. All Rights Reserved.",
+                  style: TextStyle(
+                    color: Colors.white54,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );

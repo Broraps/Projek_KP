@@ -2,6 +2,8 @@
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:youtube/widgets/social_media_icon.dart';
 
 import '../../constants/colors.dart';
 import '../../constants/skill_items.dart';
@@ -255,6 +257,62 @@ class AboutMobile extends StatelessWidget {
               ],
             ),
           ),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 40),
+            color: const Color.fromARGB(255, 31, 31, 31), // Warna gelap untuk kontras
+            child: Column(
+              children: [
+                const Text(
+                  "Hubungi Kami",
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  "Punya pertanyaan atau mau order? Jangan ragu hubungi kami!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white70,
+                  ),
+                ),
+                const SizedBox(height: 40),
+                Row( // Wrapper untuk ikon sosial media agar berada di tengah
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SocialMediaIcon(
+                      icon: FontAwesomeIcons.instagram,
+                      url: 'https://www.instagram.com/pangsitjontor.wadidaw/',
+                    ),
+                    const SizedBox(width: 30),
+                    SocialMediaIcon(
+                      icon: FontAwesomeIcons.tiktok,
+                      url: 'https://www.tiktok.com/@pangsitjontor.wadidaw',
+                    ),
+                    const SizedBox(width: 30),
+                    SocialMediaIcon(
+                      icon: FontAwesomeIcons.whatsapp,
+                      // Ganti dengan nomor WhatsApp yang benar diawali dengan 62
+                      url: 'https://wa.me/6281829414',
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 50),
+                const Divider(color: Colors.white24, indent: 100, endIndent: 100),
+                const SizedBox(height: 20),
+                const Text(
+                  "© 2024 Pangsit Jontor Wadidaw. All Rights Reserved.",
+                  style: TextStyle(
+                    color: Colors.white54,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );

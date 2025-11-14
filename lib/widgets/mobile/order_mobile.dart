@@ -41,7 +41,7 @@ class _OrderMobileState extends State<OrderMobile> {
 
         // Tampilkan produk dalam bentuk Grid
         return GridView.builder(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 80), // Padding lebih rapi
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,          // 2 kolom di mobile
             crossAxisSpacing: 16.0,     // Jarak antar item

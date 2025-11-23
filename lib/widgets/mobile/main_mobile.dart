@@ -18,24 +18,20 @@ class MainMobile extends StatelessWidget {
         throw Exception('Could not launch $url');
       }
     }
+
     final List<String> images = [
       'assets/1.JPG',
       'assets/2.JPG',
       'assets/3.JPG',
       'assets/4.JPG',
     ];
-
-    // --- PERUBAHAN UTAMA: BUNGKUS DENGAN SingleChildScrollView ---
     return SingleChildScrollView(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 30.0),
-        // Hapus constraint tinggi yang kaku agar lebih fleksibel
-        // constraints: const BoxConstraints(minHeight: 560),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Carousel Gambar
             ClipRRect(
               borderRadius: BorderRadius.circular(15.0),
               child: CarouselSlider.builder(
@@ -51,12 +47,11 @@ class MainMobile extends StatelessWidget {
                   height: screenWidth * 0.7,
                   autoPlay: true,
                   autoPlayInterval: const Duration(seconds: 4),
-                  viewportFraction: 1.0, // Tampilkan 1 gambar penuh di mobile
+                  viewportFraction: 1.0,
                 ),
               ),
             ),
             const SizedBox(height: 30),
-            // Teks Judul
             const Text(
               "Berani Coba\nSensasi Pedas\nPangsit Jontor?",
               textAlign: TextAlign.center,
@@ -76,7 +71,6 @@ class MainMobile extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 15),
-            // Teks "Ready On"
             const Text(
               "Ready On : ",
               style: TextStyle(
@@ -88,7 +82,6 @@ class MainMobile extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            // Logo Shopee & GoFood
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -125,12 +118,13 @@ class MainMobile extends StatelessWidget {
   }
 }
 
-// WIDGET UNTUK IMAGE CAROUSEL (Tidak berubah)
 class _ImageCarousel extends StatefulWidget {
   const _ImageCarousel();
+
   @override
   State<_ImageCarousel> createState() => _ImageCarouselState();
 }
+
 class _ImageCarouselState extends State<_ImageCarousel> {
   final List<String> _images = [
     'assets/1.JPG',
@@ -141,6 +135,7 @@ class _ImageCarouselState extends State<_ImageCarousel> {
   late PageController _pageController;
   late Timer _timer;
   int _currentPage = 0;
+
   @override
   void initState() {
     super.initState();
@@ -160,12 +155,14 @@ class _ImageCarouselState extends State<_ImageCarousel> {
       }
     });
   }
+
   @override
   void dispose() {
     _timer.cancel();
     _pageController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return ClipRRect(

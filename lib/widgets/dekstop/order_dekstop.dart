@@ -1,10 +1,8 @@
-// lib/widgets/desktop/order_dekstop.dart
-
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../services/cart_service.dart'; // Menggunakan service Anda
-import '../../models/cart_item_model.dart'; // Menggunakan model Anda
+import '../../services/cart_service.dart';
+import '../../models/cart_item_model.dart';
 import '../product_detail_dialog.dart';
 
 class OrderDesktop extends StatefulWidget {
@@ -19,21 +17,16 @@ class _OrderDesktopState extends State<OrderDesktop> {
       .from('products')
       .select()
       .order('created_at', ascending: false);
-
-  // Menggunakan service Anda dengan benar
   final CartService _cartService = CartService();
 
-  // --- FUNGSI CHECKOUT WHATSAPP (SUDAH DISESUAIKAN) ---
   void _checkoutToWhatsApp(List<CartItem> cartItems, double total) async {
     if (cartItems.isEmpty) return;
 
-    String phoneNumber = "6289664348703"; // Ganti dengan nomor WA Anda
+    String phoneNumber = "6285603128223";
     String message = "Halo, saya ingin memesan:\n\n";
 
     for (var item in cartItems) {
-      // Mengakses properti langsung dari 'item', bukan 'item.product'
-      message +=
-      "- ${item.title} (Rp ${item.price}) x ${item.quantity}\n";
+      message += "- ${item.title} (Rp ${item.price}) x ${item.quantity}\n";
     }
 
     message += "\nTotal: Rp ${total.toStringAsFixed(0)}";
@@ -59,14 +52,11 @@ class _OrderDesktopState extends State<OrderDesktop> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // --- BAGIAN KIRI: DAFTAR PRODUK (Tidak ada perubahan) ---
           Expanded(
             flex: 3,
             child: FutureBuilder<List<Map<String, dynamic>>>(
               future: _productsFuture,
               builder: (context, snapshot) {
-                // ... (Kode GridView, Card, dll. tetap sama) ...
-                // ... (Di dalam GridView.builder) ...
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
@@ -94,11 +84,10 @@ class _OrderDesktopState extends State<OrderDesktop> {
                       onTap: () {
                         showDialog(
                           context: context,
-                          builder: (context) =>
-                              ProductDetailDialog(
-                                product: product,
-                                cartService: _cartService,
-                              ),
+                          builder: (context) => ProductDetailDialog(
+                            product: product,
+                            cartService: _cartService,
+                          ),
                         );
                       },
                       child: Card(
@@ -115,9 +104,9 @@ class _OrderDesktopState extends State<OrderDesktop> {
                                 product['image_url'] ?? '',
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) =>
-                                const Center(
-                                    child: Icon(Icons.broken_image,
-                                        color: Colors.grey)),
+                                    const Center(
+                                        child: Icon(Icons.broken_image,
+                                            color: Colors.grey)),
                               ),
                             ),
                             Padding(
@@ -144,11 +133,9 @@ class _OrderDesktopState extends State<OrderDesktop> {
                               ),
                             ),
                             Padding(
-                              padding:
-                              const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                              padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
                               child: ElevatedButton(
                                 onPressed: () {
-                                  // Panggilan ini sudah benar
                                   _cartService.addToCart(product);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
@@ -170,17 +157,12 @@ class _OrderDesktopState extends State<OrderDesktop> {
               },
             ),
           ),
-
           const SizedBox(width: 20),
-
-          // --- BAGIAN KANAN: KERANJANG BELANJA (SUDAH DISESUAIKAN) ---
           SizedBox(
             width: 350,
             child: ValueListenableBuilder<List<CartItem>>(
-              // Mendengarkan 'items', bukan 'cart'
               valueListenable: _cartService.items,
               builder: (context, cartItems, child) {
-                // Menggunakan getter 'totalPrice' dari service
                 double total = _cartService.totalPrice;
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -188,61 +170,58 @@ class _OrderDesktopState extends State<OrderDesktop> {
                     const Text(
                       'Keranjang Belanja',
                       style:
-                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const Divider(thickness: 1.5, height: 20),
                     Expanded(
                       child: cartItems.isEmpty
                           ? const Center(
-                        child: Text('Keranjang masih kosong.'),
-                      )
+                              child: Text('Keranjang masih kosong.'),
+                            )
                           : ListView.builder(
-                        itemCount: cartItems.length,
-                        itemBuilder: (context, index) {
-                          final item = cartItems[index];
-                          return ListTile(
-                            leading: Image.network(
-                              // Mengakses 'imageUrl' langsung
-                              item.imageUrl,
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
+                              itemCount: cartItems.length,
+                              itemBuilder: (context, index) {
+                                final item = cartItems[index];
+                                return ListTile(
+                                  leading: Image.network(
+                                    item.imageUrl,
+                                    width: 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  title: Text(item.title),
+                                  subtitle: Text('Rp ${item.price}'),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(
+                                            Icons.remove_circle_outline,
+                                            color: Colors.red),
+                                        onPressed: () {
+                                          _cartService
+                                              .decrementQuantity(item.id);
+                                        },
+                                      ),
+                                      Text('${item.quantity}'),
+                                      IconButton(
+                                        icon: const Icon(
+                                            Icons.add_circle_outline,
+                                            color: Colors.green),
+                                        onPressed: () {
+                                          _cartService.addToCart({
+                                            'id': item.id,
+                                            'title': item.title,
+                                            'price': item.price,
+                                            'image_url': item.imageUrl,
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
                             ),
-                            // Mengakses 'title' langsung
-                            title: Text(item.title),
-                            subtitle: Text(
-                              // Mengakses 'quantity' dan 'price' langsung
-                                'Rp ${item.price}'),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.remove_circle_outline,
-                                      color: Colors.red),
-                                  onPressed: () {
-                                    // Mengirim 'item.id' (String)
-                                    _cartService.decrementQuantity(item.id);
-                                  },
-                                ),
-                                Text('${item.quantity}'),
-                                IconButton(
-                                  icon: const Icon(Icons.add_circle_outline,
-                                      color: Colors.green),
-                                  onPressed: () {
-                                    // Panggil addToCart dengan data produk dari item
-                                    _cartService.addToCart({
-                                      'id': item.id,
-                                      'title': item.title,
-                                      'price': item.price,
-                                      'image_url': item.imageUrl,
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
                     ),
                     const Divider(thickness: 1.5, height: 20),
                     Row(
@@ -255,7 +234,6 @@ class _OrderDesktopState extends State<OrderDesktop> {
                         ),
                         Text(
                           'Rp ${total.toStringAsFixed(0)}',
-                          // 'total' dari service
                           style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),

@@ -1,11 +1,12 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart' show kIsWeb, Uint8List; // 1. Import kIsWeb & Uint8List
+import 'package:flutter/foundation.dart' show kIsWeb, Uint8List;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProductFormPage extends StatefulWidget {
   final Map<String, dynamic>? product;
+
   const ProductFormPage({super.key, this.product});
 
   @override
@@ -18,11 +19,12 @@ class _ProductFormPageState extends State<ProductFormPage> {
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
 
-  // 2. Siapkan variabel untuk file (Mobile/Desktop) dan bytes (Web)
+  // variabel untuk file (Mobile/Desktop) dan bytes (Web)
   File? _selectedImageFile;
   Uint8List? _selectedImageBytes;
   String? _networkImageUrl;
   bool _isLoading = false;
+
   bool get _isEditMode => widget.product != null;
 
   @override
@@ -48,43 +50,47 @@ class _ProductFormPageState extends State<ProductFormPage> {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      // 3. Cek platform, lalu simpan data gambar sesuai formatnya
+      // Cek platform, simpan data gambar sesuai formatnya
       if (kIsWeb) {
         _selectedImageBytes = await pickedFile.readAsBytes();
       } else {
         _selectedImageFile = File(pickedFile.path);
       }
-      setState(() {}); // Update UI untuk menampilkan preview
+      setState(() {});
     }
   }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_selectedImageFile == null && _selectedImageBytes == null && !_isEditMode) {
+    if (_selectedImageFile == null &&
+        _selectedImageBytes == null &&
+        !_isEditMode) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Silakan pilih gambar terlebih dahulu.'),
           backgroundColor: Colors.red));
       return;
     }
 
-    setState(() { _isLoading = true; });
+    setState(() {
+      _isLoading = true;
+    });
 
     try {
       String? imageUrl;
       final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
 
-      // 4. Cek platform saat upload ke Supabase Storage
-      if (_selectedImageBytes != null) { // Upload untuk Web
+      // Cek platform saat upload ke Supabase
+      if (_selectedImageBytes != null) {
         await Supabase.instance.client.storage
             .from('food')
             .uploadBinary('uploads/$fileName', _selectedImageBytes!);
-      } else if (_selectedImageFile != null) { // Upload untuk Mobile/Desktop
+      } else if (_selectedImageFile != null) {
         await Supabase.instance.client.storage
             .from('food')
             .upload('uploads/$fileName', _selectedImageFile!);
       }
 
-      if(_selectedImageBytes != null || _selectedImageFile != null) {
+      if (_selectedImageBytes != null || _selectedImageFile != null) {
         imageUrl = Supabase.instance.client.storage
             .from('food')
             .getPublicUrl('uploads/$fileName');
@@ -110,7 +116,8 @@ class _ProductFormPageState extends State<ProductFormPage> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Produk berhasil ${_isEditMode ? 'diperbarui' : 'disimpan'}'),
+            content: Text(
+                'Produk berhasil ${_isEditMode ? 'diperbarui' : 'disimpan'}'),
             backgroundColor: Colors.green));
         Navigator.of(context).pop();
       }
@@ -122,7 +129,9 @@ class _ProductFormPageState extends State<ProductFormPage> {
       }
     }
 
-    setState(() { _isLoading = false; });
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -138,7 +147,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // 5. Widget preview gambar yang cerdas
+              // Widget preview gambar
               InkWell(
                 onTap: _pickImage,
                 child: Container(
@@ -146,26 +155,29 @@ class _ProductFormPageState extends State<ProductFormPage> {
                   decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.circular(8)),
-                  child: _buildImagePreview(), // Panggil fungsi preview
+                  child: _buildImagePreview(),
                 ),
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _titleController,
                 decoration: const InputDecoration(labelText: 'Nama Produk'),
-                validator: (value) => value!.isEmpty? 'Nama produk tidak boleh kosong' : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Nama produk tidak boleh kosong' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(labelText: 'Deskripsi'),
-                validator: (value) => value!.isEmpty? 'Deskripsi tidak boleh kosong' : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Deskripsi tidak boleh kosong' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _priceController,
                 decoration: const InputDecoration(labelText: 'Harga'),
-                validator: (value) => value!.isEmpty? 'Harga tidak boleh kosong' : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Harga tidak boleh kosong' : null,
               ),
               const SizedBox(height: 24),
               ElevatedButton(
@@ -178,7 +190,6 @@ class _ProductFormPageState extends State<ProductFormPage> {
     );
   }
 
-  // 6. Buat fungsi helper untuk memilih widget gambar yang tepat
   Widget _buildImagePreview() {
     if (_selectedImageBytes != null) {
       // Jika di web, gunakan Image.memory
@@ -192,9 +203,10 @@ class _ProductFormPageState extends State<ProductFormPage> {
     } else {
       // Tampilan default
       return const Center(
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [Icon(Icons.image, size: 40), Text('Ketuk untuk pilih gambar')]));
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Icon(Icons.image, size: 40),
+        Text('Ketuk untuk pilih gambar')
+      ]));
     }
   }
 }

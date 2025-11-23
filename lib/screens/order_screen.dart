@@ -1,12 +1,10 @@
-// lib/screens/order_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:youtube/constants/size.dart';
 import 'package:youtube/widgets/mobile/order_mobile.dart';
 
 import '../widgets/dekstop/order_dekstop.dart';
 
-class OrderScreen extends StatelessWidget { // Pastikan nama kelasnya OrderScreen
+class OrderScreen extends StatelessWidget {
   const OrderScreen({super.key});
 
   @override

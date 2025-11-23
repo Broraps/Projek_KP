@@ -11,23 +11,24 @@ class HeaderDekstop extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 60,
-      margin:const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       width: double.maxFinite,
       decoration: kHeaderDecoration,
       child: Row(
         children: [
-          SiteLogo(onTap: (){
-            if (ModalRoute.of(context)?.settings.name != '/') {
-              Navigator.pushNamed(context, '/');
-            }
-          },
+          SiteLogo(
+            onTap: () {
+              if (ModalRoute.of(context)?.settings.name != '/') {
+                Navigator.pushNamed(context, '/');
+              }
+            },
           ),
           const Spacer(),
-          for(int i=0; i < navTitles.length; i++)
+          for (int i = 0; i < navTitles.length; i++)
             Padding(
               padding: const EdgeInsets.only(right: 20),
               child: TextButton(
-                onPressed: (){
+                onPressed: () {
                   if (navTitles[i] == "Home") {
                     Navigator.pushNamed(context, '/');
                   } else if (navTitles[i] == "Tentang Kami") {
@@ -40,7 +41,8 @@ class HeaderDekstop extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: CustomColor.whitePrimary,)),
+                      color: CustomColor.whitePrimary,
+                    )),
               ),
             ),
         ],

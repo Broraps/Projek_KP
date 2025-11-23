@@ -1,4 +1,3 @@
-// screens/home_screen.dart
 import 'package:flutter/material.dart';
 import 'package:youtube/constants/size.dart';
 import 'package:youtube/widgets/dekstop/main_dekstop.dart';

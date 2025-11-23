@@ -1,5 +1,3 @@
-// lib/pages/admin/auth_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'admin_dashboard_page.dart';
@@ -42,7 +40,7 @@ class _AuthPageState extends State<AuthPage> {
       if (mounted && response.session != null) {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const AdminDashboardPage()),
-              (route) => false,
+          (route) => false,
         );
       }
     } on AuthException catch (e) {
@@ -92,7 +90,7 @@ class _AuthPageState extends State<AuthPage> {
                   decoration: const InputDecoration(labelText: 'Email'),
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) =>
-                  value!.isEmpty ? 'Email tidak boleh kosong' : null,
+                      value!.isEmpty ? 'Email tidak boleh kosong' : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -100,7 +98,7 @@ class _AuthPageState extends State<AuthPage> {
                   decoration: const InputDecoration(labelText: 'Password'),
                   obscureText: true,
                   validator: (value) =>
-                  value!.isEmpty ? 'Password tidak boleh kosong' : null,
+                      value!.isEmpty ? 'Password tidak boleh kosong' : null,
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(

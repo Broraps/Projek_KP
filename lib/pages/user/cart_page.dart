@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/cart_item_model.dart';
-import '../../services/cart_service.dart'; // 1. Import package
+import '../../services/cart_service.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -14,23 +14,25 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   final CartService _cartService = CartService();
 
-  // 2. Fungsi untuk membuat dan membuka link WhatsApp
+  // Fungsi untuk membuat dan membuka link WhatsApp
   Future<void> _checkoutToWhatsApp() async {
-    // Ganti dengan nomor WhatsApp admin (gunakan kode negara, misal 62 untuk Indonesia)
-    const String phoneNumber = '6289664348703';
+    const String phoneNumber = '6285603128223';
 
-    // Membuat template pesan
-    final StringBuffer message = StringBuffer('Hallo kak, aku mau pesan nih, yaitu:\n');
+    // template pesan
+    final StringBuffer message =
+        StringBuffer('Hallo kak, aku mau pesan nih, yaitu:\n');
     for (var item in _cartService.items.value) {
       message.writeln('- ${item.title} (${item.quantity}x)');
     }
-    message.writeln('\nTotal: Rp ${_cartService.totalPrice.toStringAsFixed(0)}');
+    message
+        .writeln('\nTotal: Rp ${_cartService.totalPrice.toStringAsFixed(0)}');
 
     // Encode pesan agar sesuai format URL
     final String encodedMessage = Uri.encodeComponent(message.toString());
 
-    // Membuat URL WhatsApp
-    final Uri whatsappUrl = Uri.parse('https://wa.me/$phoneNumber?text=$encodedMessage');
+    // URL WhatsApp
+    final Uri whatsappUrl =
+        Uri.parse('https://wa.me/$phoneNumber?text=$encodedMessage');
 
     // Mencoba membuka URL
     if (await canLaunchUrl(whatsappUrl)) {
@@ -38,7 +40,9 @@ class _CartPageState extends State<CartPage> {
     } else {
       // Jika gagal, tampilkan pesan error
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Tidak bisa membuka WhatsApp. Pastikan aplikasi sudah terinstall.')),
+        const SnackBar(
+            content: Text(
+                'Tidak bisa membuka WhatsApp. Pastikan aplikasi sudah terinstall.')),
       );
     }
   }
@@ -128,10 +132,10 @@ class _CartPageState extends State<CartPage> {
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: ElevatedButton.icon( // 3. Ganti tombol Checkout
+                child: ElevatedButton.icon(
                   icon: const Icon(Icons.chat),
                   label: const Text('Checkout via WhatsApp'),
-                  onPressed: _checkoutToWhatsApp, // Panggil fungsi baru
+                  onPressed: _checkoutToWhatsApp,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                     minimumSize: const Size.fromHeight(50),

@@ -1,11 +1,9 @@
-// lib/pages/user/product_detail_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:youtube/services/cart_service.dart';
 
 class ProductDetailPage extends StatelessWidget {
-  // Halaman ini menerima data produk yang diklik
   final Map<String, dynamic> product;
+
   const ProductDetailPage({super.key, required this.product});
 
   @override
@@ -14,16 +12,15 @@ class ProductDetailPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        // Judul AppBar diambil dari nama produk
         title: Text(product['title']),
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 1. Tampilkan Gambar Produk yang Besar
+            // Gambar produk besar
             Hero(
-              tag: 'product-image-${product['id']}', // Tag unik untuk animasi
+              tag: 'product-image-${product['id']}',
               child: Image.network(
                 product['image_url'],
                 fit: BoxFit.cover,
@@ -31,7 +28,7 @@ class ProductDetailPage extends StatelessWidget {
               ),
             ),
 
-            // 2. Tampilkan Detail di bawah gambar
+            // 2. Detail di bawah gambar
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -64,7 +61,7 @@ class ProductDetailPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  // 3. Tampilkan Deskripsi dari Database
+                  // 3. Deskripsi dari Database
                   Text(
                     product['description'],
                     style: const TextStyle(fontSize: 16, height: 1.5),
@@ -94,7 +91,8 @@ class ProductDetailPage extends StatelessWidget {
           },
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
-            textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            textStyle:
+                const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
       ),

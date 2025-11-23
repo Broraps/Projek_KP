@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:developer';
-import '../services/cart_service.dart'; // Pastikan path ini benar
+import '../services/cart_service.dart';
 
 class ProductDetailDialog extends StatelessWidget {
   final Map<String, dynamic> product;
@@ -14,10 +14,10 @@ class ProductDetailDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // --- Ambil data dengan aman (kode ini sudah bagus dari sebelumnya) ---
     final String title = product['title'] as String? ?? 'Tanpa Judul';
     final String imageUrl = product['image_url'] as String? ?? '';
-    final String description = product['description'] as String? ?? 'Tidak ada deskripsi.';
+    final String description =
+        product['description'] as String? ?? 'Tidak ada deskripsi.';
 
     double price = 0.0;
     if (product['price'] != null) {
@@ -27,17 +27,14 @@ class ProductDetailDialog extends StatelessWidget {
         price = double.tryParse(product['price'] as String) ?? 0.0;
       }
     }
-    final bool isImageUrlValid = Uri.tryParse(imageUrl)?.hasAbsolutePath ?? false;
-    // ------------------------------------------------------------------
+    final bool isImageUrlValid =
+        Uri.tryParse(imageUrl)?.hasAbsolutePath ?? false;
 
     return AlertDialog(
       title: Text(title),
       contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-
-      // --- PERBAIKAN UTAMA DI SINI ---
-      // Bungkus konten dengan SizedBox untuk memberikan batasan lebar.
       content: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.8, // Batasi lebar dialog
+        width: MediaQuery.of(context).size.width * 0.8,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -49,27 +46,31 @@ class ProductDetailDialog extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   child: (isImageUrlValid)
                       ? Image.network(
-                    imageUrl,
-                    height: 200,
-                    width: double.infinity, // Ini sekarang aman karena ada parent (SizedBox) yang membatasi
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      log("Error memuat gambar: $error");
-                      return Container(
-                        height: 200,
-                        color: Colors.grey[200],
-                        child: const Center(child: Icon(Icons.broken_image, size: 40, color: Colors.grey)),
-                      );
-                    },
-                  )
+                          imageUrl,
+                          height: 200,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            log("Error memuat gambar: $error");
+                            return Container(
+                              height: 200,
+                              color: Colors.grey[200],
+                              child: const Center(
+                                  child: Icon(Icons.broken_image,
+                                      size: 40, color: Colors.grey)),
+                            );
+                          },
+                        )
                       : Container(
-                    height: 200,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Center(child: Icon(Icons.image_not_supported, size: 40, color: Colors.grey)),
-                  ),
+                          height: 200,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Center(
+                              child: Icon(Icons.image_not_supported,
+                                  size: 40, color: Colors.grey)),
+                        ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -84,11 +85,11 @@ class ProductDetailDialog extends StatelessWidget {
               const SizedBox(height: 12),
               const Divider(),
               const SizedBox(height: 12),
-              // Gunakan Flexible di dalam Column agar tidak error jika deskripsi terlalu panjang
               Flexible(
                 child: Text(
                   description,
-                  style: const TextStyle(fontSize: 15, height: 1.5, color: Colors.black54),
+                  style: const TextStyle(
+                      fontSize: 15, height: 1.5, color: Colors.black54),
                 ),
               ),
               const SizedBox(height: 16),

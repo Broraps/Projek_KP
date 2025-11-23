@@ -1,5 +1,3 @@
-// about_mobile.dart
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,7 +11,6 @@ class AboutMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Menggunakan SingleChildScrollView agar semua konten bisa di-scroll
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -23,7 +20,6 @@ class AboutMobile extends StatelessWidget {
             color: CustomColor.scaffoldBg,
             child: Column(
               children: [
-                // Menggunakan CarouselSlider untuk galeri foto agar hemat tempat di mobile
                 CarouselSlider.builder(
                   itemCount: foodItems.length,
                   itemBuilder: (context, index, realIndex) {
@@ -49,18 +45,17 @@ class AboutMobile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 30),
-                // Teks intro dengan ukuran font yang disesuaikan untuk mobile
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Text(
                     'Pangsit Jontor Wadidaw hadir dari dapur rumahan dengan semangat UMKM yang mengutamakan rasa, kualitas, dan kepuasan pelanggan. '
-                        'Kami percaya bahwa makanan enak tidak harus mahal. Dengan bahan pilihan yang segar, bumbu khas yang menggoda, dan proses pembuatan yang higienis, '
-                        'kami menyajikan pangsit pedas dengan cita rasa wadidaw yang bikin nagih!',
+                    'Kami percaya bahwa makanan enak tidak harus mahal. Dengan bahan pilihan yang segar, bumbu khas yang menggoda, dan proses pembuatan yang higienis, '
+                    'kami menyajikan pangsit pedas dengan cita rasa wadidaw yang bikin nagih!',
                     style: TextStyle(
                       color: Colors.red[900],
                       fontStyle: FontStyle.italic,
                       fontWeight: FontWeight.bold,
-                      fontSize: 18, // Ukuran font diperkecil
+                      fontSize: 18,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -68,15 +63,12 @@ class AboutMobile extends StatelessWidget {
               ],
             ),
           ),
-
-          // Bagian 2: Peta Lokasi (Layout diubah menjadi Column)
+          // Bagian 2: Peta Lokasi
           Container(
             padding: const EdgeInsets.symmetric(vertical: 30.0),
             color: CustomColor.scaffoldBg,
-            // Tata letak diubah dari Row menjadi Column
             child: Column(
               children: [
-                // Gambar diletakkan di atas
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: ClipRRect(
@@ -85,23 +77,22 @@ class AboutMobile extends StatelessWidget {
                       "assets/stand.jpg",
                       fit: BoxFit.cover,
                       width: double.infinity,
-                      height: 250, // Memberi tinggi agar tidak terlalu besar
+                      height: 250,
                     ),
                   ),
                 ),
                 const SizedBox(height: 30),
-                // Teks alamat diletakkan di bawah
-                Icon(Icons.map_sharp, color: CustomColor.iconHeader, size: 60), // Icon diperkecil
+                Icon(Icons.map_sharp, color: CustomColor.iconHeader, size: 60),
                 const SizedBox(height: 15),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Text(
                     "Jl. Veteran No.66, Nagri Kaler\n"
-                        "Kec. Purwakarta, Kab. Purwakarta\n"
-                        "Jawa Barat 41115",
+                    "Kec. Purwakarta, Kab. Purwakarta\n"
+                    "Jawa Barat 41115",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 18, // Ukuran font diperkecil
+                      fontSize: 18,
                       height: 1.5,
                       fontWeight: FontWeight.bold,
                       color: CustomColor.backgroundPrimary,
@@ -113,16 +104,14 @@ class AboutMobile extends StatelessWidget {
             ),
           ),
 
-          // Bagian 3: Jam Buka & Review (Layout diubah menjadi Column)
+          // Bagian 3: Jam Buka & Review
           Container(
             padding: const EdgeInsets.symmetric(vertical: 30.0),
             color: CustomColor.scaffoldBg,
-            // Tata letak diubah dari Row menjadi Column
             child: Column(
               children: [
-                // Blok Jam Buka
                 SizedBox(
-                  height: 450, // Beri tinggi tetap agar layout tidak rusak
+                  height: 450,
                   child: Stack(
                     children: [
                       Column(
@@ -130,7 +119,7 @@ class AboutMobile extends StatelessWidget {
                           Expanded(
                               flex: 30,
                               child:
-                              Container(color: CustomColor.backgroundLogo)),
+                                  Container(color: CustomColor.backgroundLogo)),
                           Expanded(
                               flex: 70,
                               child: Container(
@@ -142,8 +131,8 @@ class AboutMobile extends StatelessWidget {
                           const SizedBox(height: 20),
                           Center(
                             child: Container(
-                              height: 80, // Diperkecil
-                              width: 80, // Diperkecil
+                              height: 80,
+                              width: 80,
                               decoration: const BoxDecoration(
                                 image: DecorationImage(
                                   image: AssetImage("assets/logo.png"),
@@ -160,7 +149,7 @@ class AboutMobile extends StatelessWidget {
                                 Text(
                                   "WE'ARE",
                                   style: TextStyle(
-                                    fontSize: 32, // Diperkecil
+                                    fontSize: 32,
                                     fontWeight: FontWeight.bold,
                                     color: CustomColor.backgroundLogo,
                                     shadows: [
@@ -171,7 +160,7 @@ class AboutMobile extends StatelessWidget {
                                 Text(
                                   "OPEN",
                                   style: TextStyle(
-                                    fontSize: 32, // Diperkecil
+                                    fontSize: 32,
                                     fontWeight: FontWeight.bold,
                                     color: CustomColor.backgroundLogo,
                                     shadows: [
@@ -189,7 +178,7 @@ class AboutMobile extends StatelessWidget {
                                 Text(
                                   "SENIN - SABTU || MINGGU LIBUR",
                                   style: TextStyle(
-                                    fontSize: 16, // Diperkecil
+                                    fontSize: 16,
                                     color: CustomColor.backgroundLogo,
                                     letterSpacing: 1.2,
                                   ),
@@ -198,7 +187,7 @@ class AboutMobile extends StatelessWidget {
                                 Text(
                                   "11.00-20.00",
                                   style: TextStyle(
-                                    fontSize: 16, // Diperkecil
+                                    fontSize: 16,
                                     color: CustomColor.backgroundLogo,
                                   ),
                                 ),
@@ -210,14 +199,11 @@ class AboutMobile extends StatelessWidget {
                     ],
                   ),
                 ),
-
-                const SizedBox(height: 40), // Jarak antara jam buka dan review
-
-                // Carousel Review
+                const SizedBox(height: 40),
                 CarouselSlider.builder(
                   itemCount: testiPhotos.length,
-                  itemBuilder: (BuildContext context, int itemIndex,
-                      int pageViewIndex) {
+                  itemBuilder:
+                      (BuildContext context, int itemIndex, int pageViewIndex) {
                     final photo = testiPhotos[itemIndex];
                     return Container(
                       width: MediaQuery.of(context).size.width,
@@ -247,11 +233,11 @@ class AboutMobile extends StatelessWidget {
                     );
                   },
                   options: CarouselOptions(
-                    height: 400, // Menyesuaikan tinggi untuk mobile
+                    height: 400,
                     autoPlay: true,
                     autoPlayInterval: const Duration(seconds: 3),
                     enlargeCenterPage: true,
-                    viewportFraction: 0.75, // Item terlihat lebih besar
+                    viewportFraction: 0.75,
                   ),
                 ),
               ],
@@ -259,7 +245,7 @@ class AboutMobile extends StatelessWidget {
           ),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 40),
-            color: const Color.fromARGB(255, 31, 31, 31), // Warna gelap untuk kontras
+            color: const Color.fromARGB(255, 31, 31, 31),
             child: Column(
               children: [
                 const Text(
@@ -280,31 +266,31 @@ class AboutMobile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 40),
-                Row( // Wrapper untuk ikon sosial media agar berada di tengah
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SocialMediaIcon(
                       icon: FontAwesomeIcons.instagram,
-                      url: 'https://www.instagram.com/pangsitjontor.wadidaw/',
+                      url: 'https://www.instagram.com/pangsitjontor.wadidar/',
                     ),
                     const SizedBox(width: 30),
                     SocialMediaIcon(
                       icon: FontAwesomeIcons.tiktok,
-                      url: 'https://www.tiktok.com/@pangsitjontor.wadidaw',
+                      url: 'https://www.tiktok.com/@pangsitjontor.wadidar',
                     ),
                     const SizedBox(width: 30),
                     SocialMediaIcon(
                       icon: FontAwesomeIcons.whatsapp,
-                      // Ganti dengan nomor WhatsApp yang benar diawali dengan 62
-                      url: 'https://wa.me/6281829414',
+                      url: 'https://wa.me/6285603128223',
                     ),
                   ],
                 ),
                 const SizedBox(height: 50),
-                const Divider(color: Colors.white24, indent: 100, endIndent: 100),
+                const Divider(
+                    color: Colors.white24, indent: 100, endIndent: 100),
                 const SizedBox(height: 20),
                 const Text(
-                  "© 2024 Pangsit Jontor Wadidaw. All Rights Reserved.",
+                  "© 2025 Pangsit Jontor Wadidaw. All Rights Reserved.",
                   style: TextStyle(
                     color: Colors.white54,
                     fontSize: 14,

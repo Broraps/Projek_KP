@@ -10,7 +10,6 @@ class MainDekstop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    // final screenWidth = screenSize.width;
 
     void _launchURL(String url) async {
       final Uri uri = Uri.parse(url);
@@ -30,21 +29,18 @@ class MainDekstop extends StatelessWidget {
       margin: const EdgeInsets.symmetric(
         horizontal: 20,
       ),
-      // --- PERUBAHAN 1: HAPUS TINGGI YANG KAKU ---
-      // height: screenHeight / 1.2,
       constraints: const BoxConstraints(minHeight: 350),
       child: Row(
         children: [
           Expanded(
             flex: 1,
-            // --- PERUBAHAN 2: BUNGKUS COLUMN DENGAN SingleChildScrollView ---
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
                     "Berani Coba\nSensasi Pedas\nPangsit Jontor?",
-                    textAlign: TextAlign.center, // Tambahkan ini agar rapi
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 45,
                       height: 1.5,
@@ -80,7 +76,7 @@ class MainDekstop extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 15), // Tambah jarak
+                  const SizedBox(height: 15),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -111,13 +107,12 @@ class MainDekstop extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20), // Tambah jarak
+                  const SizedBox(height: 20),
                   SizedBox(
                     width: 250,
-                    height: 50, // Beri tinggi pada tombol
+                    height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        // Arahkan ke halaman pesan
                         Navigator.pushNamed(context, '/order');
                       },
                       child: const Text("Pesan Sekarang"),
@@ -155,7 +150,6 @@ class MainDekstop extends StatelessWidget {
   }
 }
 
-// WIDGET BARU UNTUK IMAGE CAROUSEL
 class _ImageCarousel extends StatefulWidget {
   const _ImageCarousel();
 

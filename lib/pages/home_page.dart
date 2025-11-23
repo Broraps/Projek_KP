@@ -1,5 +1,3 @@
-// lib/pages/home_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:youtube/constants/colors.dart';
 import 'package:youtube/constants/size.dart';
@@ -12,6 +10,7 @@ import '../widgets/dekstop/header_dekstop.dart';
 
 class HomePage extends StatefulWidget {
   final Widget child;
+
   const HomePage({super.key, required this.child});
 
   @override
@@ -20,11 +19,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final CartService _cartService = CartService(); // Tambahkan CartService
+  final CartService _cartService = CartService();
 
   @override
   Widget build(BuildContext context) {
-    // Cek nama rute saat ini
     final currentRoute = ModalRoute.of(context)?.settings.name;
 
     return LayoutBuilder(builder: (context, constraints) {
@@ -34,46 +32,45 @@ class _HomePageState extends State<HomePage> {
         endDrawer: constraints.maxWidth >= kMinDesktopWidth
             ? null
             : const DrawerMobile(),
-        // --- PERUBAHAN 1: TAMBAHKAN FLOATING ACTION BUTTON ---
         floatingActionButton: (currentRoute == '/order' &&
-            constraints.maxWidth < kMinDesktopWidth)
+                constraints.maxWidth < kMinDesktopWidth)
             ? ValueListenableBuilder<int>(
-          valueListenable: _cartService.totalItemsNotifier,
-          builder: (context, totalItems, child) {
-            return Stack(
-              clipBehavior: Clip.none,
-              children: [
-                FloatingActionButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) => const CartPage(),
-                    ));
-                  },
-                  child: const Icon(Icons.shopping_cart),
-                ),
-                if (totalItems > 0)
-                  Positioned(
-                    right: -4,
-                    top: -4,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
+                valueListenable: _cartService.totalItemsNotifier,
+                builder: (context, totalItems, child) {
+                  return Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      FloatingActionButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => const CartPage(),
+                          ));
+                        },
+                        child: const Icon(Icons.shopping_cart),
                       ),
-                      child: Text(
-                        '$totalItems',
-                        style: const TextStyle(
-                            color: Colors.white, fontSize: 12),
-                      ),
-                    ),
-                  ),
-              ],
-            );
-          },
-        )
-            : null, // Jika bukan halaman order atau di desktop, jangan tampilkan FAB
-        // --------------------------------------------------------
+                      if (totalItems > 0)
+                        Positioned(
+                          right: -4,
+                          top: -4,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Text(
+                              '$totalItems',
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 12),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              )
+            : null,
+        // Jika bukan halaman order atau di desktop, jangan tampilkan floating action button
         body: Column(
           children: [
             if (constraints.maxWidth >= kMinDesktopWidth)

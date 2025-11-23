@@ -16,14 +16,10 @@ class _SiteLogoState extends State<SiteLogo> {
 
   void _handleSecretTap() {
     _tapCount++;
-    // Reset timer setiap kali ada ketukan baru
     _tapTimer?.cancel();
     _tapTimer = Timer(const Duration(seconds: 2), () {
-      // Jika jeda lebih dari 2 detik, reset hitungan
       _tapCount = 0;
     });
-
-    // Jika hitungan mencapai 5, navigasi ke halaman login admin
     if (_tapCount >= 5) {
       _tapCount = 0;
       _tapTimer?.cancel();
@@ -45,14 +41,12 @@ class _SiteLogoState extends State<SiteLogo> {
       children: [
         GestureDetector(
           onTap: () {
-            // Jalankan fungsi onTap normal dari parent (yang sudah kita perbaiki)
             widget.onTap?.call();
-            // Jalankan juga fungsi untuk menghitung ketukan rahasia
             _handleSecretTap();
           },
           child: Image.asset(
             "assets/logo.PNG",
-            height: 40, // Beri ukuran agar konsisten
+            height: 40,
           ),
         ),
         const SizedBox(

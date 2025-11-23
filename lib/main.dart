@@ -39,12 +39,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const HomePage(child: HomeScreen()),
         '/about': (context) => const HomePage(child: AboutScreen()),
-
-        // --- INI ADALAH LOGIKA BARU YANG LEBIH AMAN UNTUK HALAMAN PESAN ---
         '/order': (context) => const HomePage(child: OrderScreen()),
-        // ----------------------------------------------------------------
-
-        // Rute untuk admin
         '/admin_login': (context) => const AuthPage(),
         '/admin_dashboard': (context) => const AdminDashboardPage(),
       },

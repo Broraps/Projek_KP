@@ -1,5 +1,3 @@
-// lib/widgets/dekstop/about_dekstop.dart
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -10,8 +8,13 @@ import '../../constants/colors.dart';
 import '../../constants/skill_items.dart';
 
 void _launchMaps() async {
-  const String query = "Jl. Veteran No.66, Nagri Kaler, Kec. Purwakarta, Kab. Purwakarta, Jawa Barat 41115";
-  final Uri uri = Uri(scheme: 'https', host: 'www.google.com', path: '/maps/search/', queryParameters: {'api': '1', 'query': query});
+  const String query =
+      "Jl. Veteran No.66, Nagri Kaler, Kec. Purwakarta, Kab. Purwakarta, Jawa Barat 41115";
+  final Uri uri = Uri(
+      scheme: 'https',
+      host: 'www.google.com',
+      path: '/maps/search/',
+      queryParameters: {'api': '1', 'query': query});
   if (await canLaunchUrl(uri)) {
     await launchUrl(uri);
   } else {
@@ -72,7 +75,6 @@ class AboutDekstop extends StatelessWidget {
             color: CustomColor.scaffoldBg,
             child: Row(
               children: [
-                // Teks
                 Expanded(
                   flex: 1,
                   child: Column(
@@ -131,7 +133,7 @@ class AboutDekstop extends StatelessWidget {
                       "assets/stand.jpg",
                       fit: BoxFit.cover,
                       width: double.infinity,
-                      height: 500, // Beri tinggi tetap di sini
+                      height: 500,
                     ),
                   ),
                 ),
@@ -283,10 +285,10 @@ class AboutDekstop extends StatelessWidget {
               ],
             ),
           ),
-          // Footer Section
+          // sesi footer
           Container(
             padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 40),
-            color: const Color.fromARGB(255, 31, 31, 31), // Warna gelap untuk kontras
+            color: const Color.fromARGB(255, 31, 31, 31),
             child: Column(
               children: [
                 const Text(
@@ -307,28 +309,28 @@ class AboutDekstop extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 40),
-                Row( // Wrapper untuk ikon sosial media agar berada di tengah
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SocialMediaIcon(
                       icon: FontAwesomeIcons.instagram,
-                      url: 'https://www.instagram.com/pangsitjontor.wadidaw/',
+                      url: 'https://www.instagram.com/pangsitjontor.wadidar/',
                     ),
                     const SizedBox(width: 30),
                     SocialMediaIcon(
                       icon: FontAwesomeIcons.tiktok,
-                      url: 'https://www.tiktok.com/@pangsitjontor.wadidaw',
+                      url: 'https://www.tiktok.com/@pangsitjontor.wadidar',
                     ),
                     const SizedBox(width: 30),
                     SocialMediaIcon(
                       icon: FontAwesomeIcons.whatsapp,
-                      // Ganti dengan nomor WhatsApp yang benar diawali dengan 62
-                      url: 'https://wa.me/6281829414',
+                      url: 'https://wa.me/6285603128223',
                     ),
                   ],
                 ),
                 const SizedBox(height: 50),
-                const Divider(color: Colors.white24, indent: 100, endIndent: 100),
+                const Divider(
+                    color: Colors.white24, indent: 100, endIndent: 100),
                 const SizedBox(height: 20),
                 const Text(
                   "© 2024 Pangsit Jontor Wadidaw. All Rights Reserved.",

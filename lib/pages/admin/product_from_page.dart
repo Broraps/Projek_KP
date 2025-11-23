@@ -19,7 +19,6 @@ class _ProductFormPageState extends State<ProductFormPage> {
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
 
-  // variabel untuk file (Mobile/Desktop) dan bytes (Web)
   File? _selectedImageFile;
   Uint8List? _selectedImageBytes;
   String? _networkImageUrl;
@@ -50,7 +49,6 @@ class _ProductFormPageState extends State<ProductFormPage> {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      // Cek platform, simpan data gambar sesuai formatnya
       if (kIsWeb) {
         _selectedImageBytes = await pickedFile.readAsBytes();
       } else {
@@ -66,8 +64,10 @@ class _ProductFormPageState extends State<ProductFormPage> {
         _selectedImageBytes == null &&
         !_isEditMode) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Silakan pilih gambar terlebih dahulu.'),
-          backgroundColor: Colors.red));
+        content: Text('Silakan pilih gambar terlebih dahulu.'),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+      ));
       return;
     }
 
@@ -79,7 +79,6 @@ class _ProductFormPageState extends State<ProductFormPage> {
       String? imageUrl;
       final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
 
-      // Cek platform saat upload ke Supabase
       if (_selectedImageBytes != null) {
         await Supabase.instance.client.storage
             .from('food')
@@ -116,16 +115,20 @@ class _ProductFormPageState extends State<ProductFormPage> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-                'Produk berhasil ${_isEditMode ? 'diperbarui' : 'disimpan'}'),
-            backgroundColor: Colors.green));
+          content: Text(
+              'Produk berhasil ${_isEditMode ? 'diperbarui' : 'disimpan'}'),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+        ));
         Navigator.of(context).pop();
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Gagal menyimpan produk: $e'),
-            backgroundColor: Colors.red));
+          content: Text('Gagal menyimpan produk: $e'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ));
       }
     }
 
@@ -134,55 +137,150 @@ class _ProductFormPageState extends State<ProductFormPage> {
     });
   }
 
+  // Helper untuk gaya input field agar konsisten
+  InputDecoration _inputDecoration(String label, {String? prefix}) {
+    return InputDecoration(
+      labelText: label,
+      prefixText: prefix,
+      filled: true,
+      fillColor: Colors.grey[100],
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[50], // Background senada dengan Dashboard
       appBar: AppBar(
-        title: Text(_isEditMode ? 'Edit Produk' : 'Tambah Produk Baru'),
+        title: Text(
+          _isEditMode ? 'Edit Produk' : 'Tambah Produk Baru',
+          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0.5,
+        iconTheme: const IconThemeData(color: Colors.black87),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Widget preview gambar
-              InkWell(
+              // 1. Area Upload Gambar
+              GestureDetector(
                 onTap: _pickImage,
                 child: Container(
-                  height: 200,
+                  height: 220,
+                  width: double.infinity,
                   decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(8)),
-                  child: _buildImagePreview(),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.grey.shade300),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: _buildImagePreview(),
+                  ),
                 ),
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _titleController,
-                decoration: const InputDecoration(labelText: 'Nama Produk'),
-                validator: (value) =>
-                    value!.isEmpty ? 'Nama produk tidak boleh kosong' : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(labelText: 'Deskripsi'),
-                validator: (value) =>
-                    value!.isEmpty ? 'Deskripsi tidak boleh kosong' : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _priceController,
-                decoration: const InputDecoration(labelText: 'Harga'),
-                validator: (value) =>
-                    value!.isEmpty ? 'Harga tidak boleh kosong' : null,
-              ),
               const SizedBox(height: 24),
-              ElevatedButton(
+
+              // 2. Form Input Fields (Dikelompokkan dalam Card putih)
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _titleController,
+                      decoration: _inputDecoration('Nama Produk'),
+                      validator: (value) =>
+                      value!.isEmpty ? 'Nama produk wajib diisi' : null,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _descriptionController,
+                      maxLines: 3,
+                      decoration: _inputDecoration('Deskripsi'),
+                      validator: (value) =>
+                      value!.isEmpty ? 'Deskripsi wajib diisi' : null,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _priceController,
+                      keyboardType: TextInputType.number,
+                      decoration: _inputDecoration('Harga', prefix: 'Rp '),
+                      validator: (value) =>
+                      value!.isEmpty ? 'Harga wajib diisi' : null,
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 30),
+
+              // 3. Tombol Simpan
+              SizedBox(
+                height: 50,
+                child: ElevatedButton(
                   onPressed: _isLoading ? null : _submit,
-                  child: Text(_isLoading ? 'Menyimpan...' : 'Simpan Produk')),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 2,
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  )
+                      : Text(
+                    _isEditMode ? 'Perbarui Produk' : 'Simpan Produk',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -191,22 +289,48 @@ class _ProductFormPageState extends State<ProductFormPage> {
   }
 
   Widget _buildImagePreview() {
+    Widget imageWidget;
+    bool hasImage = false;
+
     if (_selectedImageBytes != null) {
-      // Jika di web, gunakan Image.memory
-      return Image.memory(_selectedImageBytes!, fit: BoxFit.cover);
+      imageWidget = Image.memory(_selectedImageBytes!, fit: BoxFit.cover, width: double.infinity);
+      hasImage = true;
     } else if (_selectedImageFile != null) {
-      // Jika di mobile/desktop, gunakan Image.file
-      return Image.file(_selectedImageFile!, fit: BoxFit.cover);
+      imageWidget = Image.file(_selectedImageFile!, fit: BoxFit.cover, width: double.infinity);
+      hasImage = true;
     } else if (_networkImageUrl != null) {
-      // Jika mode edit dan belum ada gambar baru, tampilkan gambar lama
-      return Image.network(_networkImageUrl!, fit: BoxFit.cover);
+      imageWidget = Image.network(_networkImageUrl!, fit: BoxFit.cover, width: double.infinity);
+      hasImage = true;
     } else {
-      // Tampilan default
-      return const Center(
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(Icons.image, size: 40),
-        Text('Ketuk untuk pilih gambar')
-      ]));
+      imageWidget = Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.add_photo_alternate_rounded, size: 50, color: Colors.blueAccent.withOpacity(0.5)),
+          const SizedBox(height: 8),
+          Text(
+            'Ketuk untuk upload gambar',
+            style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w500),
+          ),
+        ],
+      );
     }
+
+    // Jika ada gambar, tambahkan overlay icon edit agar user tahu bisa diganti
+    if (hasImage) {
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          imageWidget,
+          Container(
+            color: Colors.black.withOpacity(0.2), // Dark overlay sedikit
+            child: const Center(
+              child: Icon(Icons.edit, color: Colors.white, size: 40),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return imageWidget;
   }
 }

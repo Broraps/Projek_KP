@@ -36,17 +36,19 @@ class AboutDekstop extends StatelessWidget {
             color: CustomColor.scaffoldBg,
             child: Column(
               children: [
-                Wrap(
-                  spacing: 20,
-                  runSpacing: 20,
-                  alignment: WrapAlignment.center,
-                  children: foodItems.map((item) {
+                CarouselSlider(
+                  options: CarouselOptions(
+                    height: 300.0,
+                    autoPlay: true,
+                    autoPlayInterval: const Duration(seconds: 3),
+                    viewportFraction: 0.3,
+                    enlargeCenterPage: true,
+                  ),
+                  items: foodItems.map((item) {
                     return ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: Image.asset(
                         item["img"],
-                        width: 300,
-                        height: 300,
                         fit: BoxFit.cover,
                       ),
                     );

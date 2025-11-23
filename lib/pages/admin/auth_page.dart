@@ -69,43 +69,117 @@ class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Admin Login')),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'Selamat Datang Admin',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineSmall,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.blue.shade800,
+              Colors.blue.shade400,
+            ],
+          ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Icon(
+                        Icons.admin_panel_settings,
+                        size: 64,
+                        color: Colors.blue,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Admin Portal',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue.shade900,
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Silakan login untuk melanjutkan',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
+                      const SizedBox(height: 32),
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          prefixIcon: const Icon(Icons.email_outlined),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) =>
+                            value!.isEmpty ? 'Email tidak boleh kosong' : null,
+                      ),
+                      const SizedBox(height: 20),
+                      TextFormField(
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        obscureText: true,
+                        validator: (value) =>
+                            value!.isEmpty ? 'Password tidak boleh kosong' : null,
+                      ),
+                      const SizedBox(height: 32),
+                      SizedBox(
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: _isLoading ? null : _signIn,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue.shade700,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 2,
+                          ),
+                          child: _isLoading
+                              ? const SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text(
+                                  'MASUK',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 24),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) =>
-                      value!.isEmpty ? 'Email tidak boleh kosong' : null,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                  validator: (value) =>
-                      value!.isEmpty ? 'Password tidak boleh kosong' : null,
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _signIn,
-                  child: Text(_isLoading ? 'Loading...' : 'Login Admin'),
-                ),
-              ],
+              ),
             ),
           ),
         ),
